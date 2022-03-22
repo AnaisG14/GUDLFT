@@ -3,12 +3,20 @@ from flask import Flask, render_template, request, redirect, flash, url_for
 
 
 def load_clubs():
+    """
+    Load all clubs saved in the file "clubs.json".
+    :return: list of clubs where each club is saved with a dictionary
+    """
     with open('clubs.json') as c:
         list_of_clubs = json.load(c)['clubs']
         return list_of_clubs
 
 
 def load_competitions():
+    """
+        Load all competitions saved in the file "competitions.json"
+        :return: list of competitions where each competition is saved with a dictionary
+        """
     with open('competitions.json') as comps:
         list_of_competitions = json.load(comps)['competitions']
         return list_of_competitions
@@ -28,8 +36,13 @@ def index():
 
 @app.route('/showSummary', methods=['POST'])
 def show_summary():
-    club = [club for club in clubs if club['email'] == request.form['email']][0]
-    return render_template('welcome.html', club=club, competitions=competitions)
+    for each_club in clubs:
+        if request.form['email'] == each_club['email']:
+            club = each_club
+            return render_template('welcome.html', club=club, competitions=competitions)
+        else:
+            return render_template('index.html')
+
 
 
 @app.route('/book/<competition>/<club>')
