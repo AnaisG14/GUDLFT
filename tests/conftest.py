@@ -15,19 +15,19 @@ def mock_clubs(mocker):
         {
             "name": "Club 1",
             "email": "club1@test.com",
-            "points": "1"
+            "points": "10"
         },
         {
             "name": "Club 2",
             "email": "club2@test.com",
-            "points": "2"
+            "points": "20"
         }
     ]
     mocker.patch.object(server, 'clubs', data)
 
 
 @pytest.fixture
-def mock_competitions():
+def mock_competitions(mocker):
     data = [
         {
             "name": "Competition 1",
@@ -40,5 +40,5 @@ def mock_competitions():
             "numberOfPlaces": "13"
         }
     ]
-    return data
+    mocker.patch.object(server, 'competitions', data)
 

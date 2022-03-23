@@ -25,8 +25,8 @@ def load_competitions():
 app = Flask(__name__)
 app.secret_key = 'something_special'
 
-competitions = load_competitions()
 clubs = load_clubs()
+competitions = load_competitions()
 
 
 @app.route('/')
@@ -42,7 +42,6 @@ def show_summary():
             return render_template('welcome.html', club=club, competitions=competitions)
         else:
             return render_template('index.html')
-
 
 
 @app.route('/book/<competition>/<club>')
@@ -62,6 +61,7 @@ def purchase_places():
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     places_required = int(request.form['places'])
     competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - places_required
+    club['points'] = int(club['points']) - places_required
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
 
