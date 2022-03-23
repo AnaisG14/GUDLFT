@@ -1,5 +1,4 @@
-from tests.conftest import client, data_club_json, data_competition_json
-import server
+from tests.conftest import client, mock_clubs, mock_competitions
 
 
 def test_status_code_request_200(client):
@@ -13,18 +12,16 @@ def test_request_display_example(client):
     assert "Welcome to the GUDLFT Registration Portal!" in data
 
 
-def test_login_with_email_valid(client, mocker, data_club_json):
+def test_login_with_email_valid(client, mock_clubs):
     email = "club1@test.com"
-    mocker.patch.object(server, 'clubs', data_club_json)
     test_log = client.post('/showSummary', data={'email': email})
     data = test_log.data.decode()
     assert "Points available" in data
     assert test_log.status_code == 200
 
 
-def test_user_email_unknown(client, mocker, data_club_json):
+def test_user_email_unknown(client, mock_clubs):
     email = "no_register_email@test.fr"
-    mocker.patch.object(server, 'clubs', data_club_json)
     test_log = client.post('/showSummary', data={'email': email}, follow_redirects=True)
     data = test_log.data.decode()
     assert "Welcome to the GUDLFT Registration Portal!" in data

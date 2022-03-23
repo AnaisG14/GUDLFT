@@ -10,7 +10,7 @@ def client():
 
 
 @pytest.fixture
-def data_club_json():
+def mock_clubs(mocker):
     data = [
         {
             "name": "Club 1",
@@ -23,11 +23,11 @@ def data_club_json():
             "points": "2"
         }
     ]
-    return data
+    mocker.patch.object(server, 'clubs', data)
 
 
 @pytest.fixture
-def data_competition_json():
+def mock_competitions():
     data = [
         {
             "name": "Competition 1",
@@ -41,3 +41,4 @@ def data_competition_json():
         }
     ]
     return data
+
