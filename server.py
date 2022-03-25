@@ -31,11 +31,18 @@ competitions = load_competitions()
 
 @app.route('/')
 def index():
+    """Display the page of connexion"""
     return render_template('index.html')
 
 
 @app.route('/showSummary', methods=['POST'])
 def show_summary():
+    """
+    Display the page with a list of available competitions.
+    For each competition, a button allows user to book places
+    If the client is not connected, the client is redirected on index.html.
+    :return: template
+    """
     for each_club in clubs:
         if request.form['email'] == each_club['email']:
             club = each_club
@@ -57,6 +64,10 @@ def book(competition, club):
 
 @app.route('/purchasePlaces', methods=['POST'])
 def purchase_places():
+    """
+    Display the list of competitions after booking places with the template "welcome.html"
+    :return: template
+    """
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     places_required = int(request.form['places'])
