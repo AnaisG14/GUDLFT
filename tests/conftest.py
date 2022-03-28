@@ -1,11 +1,19 @@
 import pytest
 import server
+from flask import template_rendered
 
 
-@pytest.fixture()
-def client():
-    server.app.config.update({"TESTING": True})
-    with server.app.test_client() as client:
+@pytest.fixture
+def app():
+    app = server.app
+    app.config.update(({'TESTING': True}))
+    yield app
+
+
+@pytest.fixture
+def client(app):
+    # server.app.config.update({"TESTING": True})
+    with app.test_client() as client:
         yield client
 
 
@@ -42,3 +50,16 @@ def mock_competitions(mocker):
     ]
     mocker.patch.object(server, 'competitions', data)
 
+
+@pytest.fixture
+def captured_templates(app):
+    recorded = []
+
+    def record(sender, template, context, **extra):
+        recorded.append((template, context))
+
+    template_rendered.connect(record, app)
+    try:
+        yield recorded
+    finally:
+        template_rendered.disconnect(record, app)

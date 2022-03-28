@@ -6,11 +6,29 @@ import server
 class TestPurchasePlaces:
     booking_places = {'places': '4', 'competition': 'Competition 1', 'club': 'Club 1'}
 
-    def test_updating_points_after_purchase_places(self, client, mock_clubs, mock_competitions):
+    def test_updating_points_after_purchase_places(self, client, captured_templates, mock_clubs, mock_competitions):
         request = client.post('/purchasePlaces', data=self.booking_places)
-        data = request.data.decode()
         # mocks_club1 has 10 points, it must have 6 after the purchase
-        assert 'Points available: 6' in data
+        assert request.status_code == 200
+        assert len(captured_templates) == 1
+        template, context = captured_templates[0]
+        assert template.name == "welcome.html"
+        assert context["club"] == {'name': 'Club 1', 'email': 'club1@test.com', 'points': 6}
+        assert context["club"]['points'] == 6
+
+    def test_booking_places_in_a_competition(self, client, captured_templates, mock_clubs, mock_competitions):
+        request = client.get('/book/Competition 2/Club 2')
+        assert request.status_code == 200
+        assert len(captured_templates) == 1
+        template, context = captured_templates[0]
+        assert template.name == "booking.html"
+
+    def test_not_allowed_booking_places_in_past_competition(self, client, captured_templates, mock_clubs, mock_competitions):
+        request = client.get('/book/Competition 1/Club 1')
+        assert request.status_code == 200
+        assert len(captured_templates) == 1
+        template, context = captured_templates[0]
+        assert template.name == "welcome.html"
 
 
 

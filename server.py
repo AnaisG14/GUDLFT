@@ -1,5 +1,6 @@
 import json
 from flask import Flask, render_template, request, redirect, flash, url_for
+import datetime
 
 
 def load_clubs():
@@ -55,7 +56,11 @@ def show_summary():
 def book(competition, club):
     found_club = [c for c in clubs if c['name'] == club][0]
     found_competition = [c for c in competitions if c['name'] == competition][0]
+    competition_date = transform_string_in_datetime(found_competition['date'])
     if found_club and found_competition:
+        if competition_date[0] < competition_date[1]:
+            flash("This competition is finished, you can't book places")
+            return render_template("welcome.html", club=club, competitions=competitions)
         return render_template('booking.html', club=found_club, competition=found_competition)
     else:
         flash("Something went wrong-please try again")
@@ -83,3 +88,17 @@ def purchase_places():
 @app.route('/logout')
 def logout():
     return redirect(url_for('index'))
+
+
+def transform_string_in_datetime(string_date):
+    competition_date, competition_hour = string_date.split()
+    competition_date_str = competition_date.split("-")
+    competition_hour_str = competition_hour.split(":")
+    competition_date = datetime.datetime(int(competition_date_str[0]),
+                                         int(competition_date_str[1]),
+                                         int(competition_date_str[2]),
+                                         int(competition_hour_str[0]),
+                                         int(competition_hour_str[1]),
+                                         int(competition_hour_str[2]))
+    today_datetime = datetime.datetime.now()
+    return competition_date, today_datetime
