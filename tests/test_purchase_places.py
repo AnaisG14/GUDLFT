@@ -13,7 +13,6 @@ class TestPurchasePlaces:
         assert len(captured_templates) == 1
         template, context = captured_templates[0]
         assert template.name == "welcome.html"
-        assert context["club"] == {'name': 'Club 1', 'email': 'club1@test.com', 'points': 6}
         assert context["club"]['points'] == 6
 
     def test_booking_places_in_a_competition(self, client, captured_templates, mock_clubs, mock_competitions):
