@@ -5,6 +5,7 @@ import server
 
 class TestPurchasePlaces:
     booking_places = {'places': '4', 'competition': 'Competition 2', 'club': 'Club 1'}
+    booking_places_over_12 = {'places': '14', 'competition': 'Competition 2', 'club': 'Club 1'}
 
     @staticmethod
     def _test_request(request, captured_templates):
@@ -38,4 +39,10 @@ class TestPurchasePlaces:
         data = request.data.decode()
         assert 'Great-booking complete' in data
 
-
+    def test_booking_no_more_than_12_places_per_competition(self, client, captured_templates, mock_clubs, mock_competitions):
+        request = client.post('/purchasePlaces', data=self.booking_places_over_12)
+        template, context = self._test_request(request, captured_templates)
+        assert template.name == "welcome.html"
+        data = request.data.decode()
+        assert 'You can\'t book more than 12 places for one competition.' in data
+        assert context["competitions"][1]['numberOfPlaces'] == 13
