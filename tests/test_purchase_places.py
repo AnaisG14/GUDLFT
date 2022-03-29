@@ -44,5 +44,5 @@ class TestPurchasePlaces:
         template, context = self._test_request(request, captured_templates)
         assert template.name == "welcome.html"
         data = request.data.decode()
-        assert 'You can\'t book more than 12 places for one competition.' in data
-        assert context["competitions"][1]['numberOfPlaces'] == 13
+        assert "You cannot book more than 12 places for one competition. The transaction is aborted." in data
+        assert int(context["competitions"][1]['numberOfPlaces']) == 13
