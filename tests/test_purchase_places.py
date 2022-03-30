@@ -6,6 +6,7 @@ import server
 class TestPurchasePlaces:
     booking_places = {'places': '4', 'competition': 'Competition 2', 'club': 'Club 1'}
     booking_places_over_12 = {'places': '14', 'competition': 'Competition 2', 'club': 'Club 1'}
+    booking_more_places_than_points = {'places': '11', 'competition': 'Competition 2', 'club': 'Club 1'}
 
     @staticmethod
     def _test_request(request, captured_templates):
@@ -46,3 +47,14 @@ class TestPurchasePlaces:
         data = request.data.decode()
         assert "You cannot book more than 12 places for one competition. The transaction is aborted." in data
         assert int(context["competitions"][1]['numberOfPlaces']) == 13
+
+    def test_impossible_booking_more_than_club_points(self,client, captured_templates,mock_clubs,mock_competitions):
+        request = client.post('/purchasePlaces', data=self.booking_more_places_than_points)
+        template, context = self._test_request(request, captured_templates)
+        assert template.name == "welcome.html"
+        data = request.data.decode()
+        assert "You do not have enough points. The transaction is aborted." in data
+        assert int(context['competitions'][1]['numberOfPlaces']) == 13
+        assert int(context['club']['points']) == 10
+
+
