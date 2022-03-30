@@ -1,6 +1,5 @@
-from tests.conftest import client, mock_clubs, mock_competitions
-from server import purchase_places
-import server
+from server import transform_string_in_datetime
+import pytest
 
 
 class TestPurchasePlaces:
@@ -48,7 +47,7 @@ class TestPurchasePlaces:
         assert "You cannot book more than 12 places for one competition. The transaction is aborted." in data
         assert int(context["competitions"][1]['numberOfPlaces']) == 13
 
-    def test_impossible_booking_more_than_club_points(self,client, captured_templates,mock_clubs,mock_competitions):
+    def test_impossible_booking_more_than_club_points(self, client, captured_templates, mock_clubs, mock_competitions):
         request = client.post('/purchasePlaces', data=self.booking_more_places_than_points)
         template, context = self._test_request(request, captured_templates)
         assert template.name == "welcome.html"
@@ -57,4 +56,15 @@ class TestPurchasePlaces:
         assert int(context['competitions'][1]['numberOfPlaces']) == 13
         assert int(context['club']['points']) == 10
 
+    def test_transform_string_datetime_in_datetime(self):
+        string_datetime = "2022-03-20 10:00:00"
+        new_datetime, today_datetime = transform_string_in_datetime(string_datetime)
+        assert str(new_datetime) == string_datetime
 
+    @pytest.mark.parametrize("url_link", ['/book/Competition 3/Club 1', '/book/Competition 2/Club 3'])
+    def test_book_with_wrong_club_or_wrong_competition(self, url_link, client, captured_templates, mock_clubs, mock_competitions):
+        request = client.get(url_link)
+        template, context = self._test_request(request, captured_templates)
+        assert template.name == "welcome.html"
+        data = request.data.decode()
+        assert "Something went wrong-please try again" in data
