@@ -1,5 +1,6 @@
 from server import transform_string_in_datetime
 import pytest
+import datetime
 
 
 class TestPurchasePlaces:
@@ -22,12 +23,14 @@ class TestPurchasePlaces:
         assert template.name == "welcome.html"
         assert context["club"]['points'] == 6
 
-    def test_booking_places_in_a_competition(self, client, captured_templates, mock_clubs, mock_competitions):
+    def test_booking_places_in_a_competition(self,mocker, client, captured_templates, mock_clubs, mock_competitions):
+        mocker.patch('server.transform_string_in_datetime', return_value=(datetime.datetime(2022, 5, 22, 10, 0), datetime.datetime.now()))
         request = client.get('/book/Competition 2/Club 2')
         template, context = self._test_request(request, captured_templates)
         assert template.name == "booking.html"
 
-    def test_not_allowed_booking_places_in_past_competition(self, client, captured_templates, mock_clubs, mock_competitions):
+    def test_not_allowed_booking_places_in_past_competition(self, mocker, client, captured_templates, mock_clubs, mock_competitions):
+        mocker.patch('server.transform_string_in_datetime', return_value=(datetime.datetime(2022, 3, 20, 10, 0), datetime.datetime.now()))
         request = client.get('/book/Competition 1/Club 1')
         template, context = self._test_request(request, captured_templates)
         assert template.name == "welcome.html"
