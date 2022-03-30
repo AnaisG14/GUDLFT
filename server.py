@@ -80,10 +80,14 @@ def purchase_places():
         flash("You cannot book more than 12 places for one competition. The transaction is aborted.")
         return render_template('welcome.html', club=club, competitions=competitions)
     else:
-        competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - places_required
-        club['points'] = int(club['points']) - places_required
-        flash('Great-booking complete!')
-        return render_template('welcome.html', club=club, competitions=competitions)
+        if int(club['points']) < places_required:
+            flash("You do not have enough points. The transaction is aborted.")
+            return render_template("welcome.html", club=club, competitions=competitions)
+        else:
+            competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - places_required
+            club['points'] = int(club['points']) - places_required
+            flash('Great-booking complete!')
+            return render_template('welcome.html', club=club, competitions=competitions)
 
 
 # TODO: Add route for points display
