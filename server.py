@@ -54,17 +54,25 @@ def show_summary():
 
 @app.route('/book/<competition>/<club>')
 def book(competition, club):
-    found_club = [c for c in clubs if c['name'] == club][0]
-    found_competition = [c for c in competitions if c['name'] == competition][0]
-    competition_date = transform_string_in_datetime(found_competition['date'])
+    """
+    Display a page where user can choose how many places does he want booking and
+    return the welcome page with the appropriate message.
+    :param competition:
+    :param club:
+    :return: template
+    """
+    try:
+        found_club = [c for c in clubs if c['name'] == club][0]
+        found_competition = [c for c in competitions if c['name'] == competition][0]
+        competition_date = transform_string_in_datetime(found_competition['date'])
+    except IndexError:
+        flash("Something went wrong-please try again")
+        return render_template('welcome.html', club=club, competitions=competitions)
     if found_club and found_competition:
         if competition_date[0] < competition_date[1]:
             flash("This competition is finished, you can't book places")
             return render_template("welcome.html", club=club, competitions=competitions)
         return render_template('booking.html', club=found_club, competition=found_competition)
-    else:
-        flash("Something went wrong-please try again")
-        return render_template('welcome.html', club=club, competitions=competitions)
 
 
 @app.route('/purchasePlaces', methods=['POST'])
@@ -95,10 +103,19 @@ def purchase_places():
 
 @app.route('/logout')
 def logout():
+    """
+    Redirect the user on the connexion page after click on logout
+    """
     return redirect(url_for('index'))
 
 
 def transform_string_in_datetime(string_date):
+    """
+    Transform a string date in a datetime date in order to use it to compare with
+    the today's date.
+    :param string_date:
+    :return: tuple [datetime, datetime]
+    """
     competition_date, competition_hour = string_date.split()
     competition_date_str = competition_date.split("-")
     competition_hour_str = competition_hour.split(":")
