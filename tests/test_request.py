@@ -1,3 +1,6 @@
+from flask import request, url_for
+
+
 def test_display_index_for_request_index(client, captured_templates):
     """ Test url '/' and verify that the render template is 'index.html and
     the status of the request is 200.
@@ -42,4 +45,6 @@ def test_user_logout(client, captured_templates):
     """
     response = client.get('/logout')
     assert response.status_code == 302
+    client.get(url_for('index'))
+    assert request.path == url_for('index')
 

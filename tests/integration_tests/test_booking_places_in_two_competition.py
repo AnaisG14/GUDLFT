@@ -21,3 +21,8 @@ def test_booking_places_in_two_competition(client, captured_templates, mock_comp
     assert int(context['competitions'][2]['numberOfPlaces']) == 12
 
 
+
+# book places in competition 2
+# logout
+# login
+# verify that places already booked in competition are deducted
