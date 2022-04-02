@@ -1,20 +1,11 @@
-from server import load_clubs, load_competitions
+from unittest.mock import mock_open, patch
+import pytest
 
 
-def test_clubs_loaded_in_list():
-    list_of_clubs = load_clubs()
-    assert type(list_of_clubs) == list
-    assert type(list_of_clubs[0]) == dict
-    assert list_of_clubs[0]['name']
-    assert list_of_clubs[0]['email']
-    assert list_of_clubs[0]['points']
+@pytest.mark.parametrize('file', ['clubs.json', 'competitions.json'])
+def test_loading_clubs_and_competitions(file):
+    with patch('builtins.open', mock_open(read_data='data')) as mock_file:
+        assert open(file).read() == 'data'
+    mock_file.assert_called_with(file)
 
-
-def test_competition_loaded_in_list():
-    list_of_competitions = load_competitions()
-    assert type(list_of_competitions) == list
-    assert type(list_of_competitions[0]) == dict
-    assert list_of_competitions[0]['name']
-    assert list_of_competitions[0]['date']
-    assert list_of_competitions[0]['numberOfPlaces']
 
