@@ -48,3 +48,4 @@ def test_user_logout(client, captured_templates):
     client.get(url_for('index'))
     assert request.path == url_for('index')
 
+
