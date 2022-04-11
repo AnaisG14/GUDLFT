@@ -6,5 +6,13 @@
     </head>
     <body>
         <h1>Summary of points' clubs</h1>
+        <ul>
+        {% for club in clubs %}
+            <li>
+                {{club['name']}} : points available = {{club['points']}}
+            </li>
+        {% endfor %}
+        </ul>
+            <a href="{{ url_for('index')}}">login</a>
     </body>
 </html>
