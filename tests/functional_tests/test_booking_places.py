@@ -41,7 +41,7 @@ class TestBookingPlaces:
         valid_booking = self.browser.find_element(by=By.TAG_NAME, value='button')
         valid_booking.click()
         display_number_of_places = self.browser.find_element(by=By.XPATH, value='//ul/li[2]').text
-        assert '9' in display_number_of_places
+        assert '1' in display_number_of_places
 
         # logout user
         logout = self.browser.find_element(by=By.XPATH, value='//body/a')

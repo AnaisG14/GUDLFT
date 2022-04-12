@@ -4,7 +4,7 @@ import datetime
 
 
 class TestPurchasePlaces:
-    booking_places = {'places': '4', 'competition': 'Competition 2', 'club': 'Club 1'}
+    booking_places = {'places': '4', 'competition': 'Competition 2', 'club': 'Club 2'}
     booking_places_over_12 = {'places': '14', 'competition': 'Competition 2', 'club': 'Club 1'}
     booking_more_places_than_points = {'places': '11', 'competition': 'Competition 2', 'club': 'Club 1'}
 
@@ -18,10 +18,10 @@ class TestPurchasePlaces:
 
     def test_updating_points_after_purchase_places(self, client, captured_templates, mock_clubs, mock_competitions):
         request = client.post('/purchasePlaces', data=self.booking_places)
-        # mocks_club1 has 10 points, it must have 6 after the purchase
+        # mocks_club1 has 20 points, it must have 8 after the purchase
         template, context = self._test_request(request, captured_templates)
         assert template.name == "welcome.html"
-        assert context["club"]['points'] == 6
+        assert context["club"]['points'] == 8
 
     def test_booking_places_in_a_competition(self, mocker, client, captured_templates, mock_clubs, mock_competitions):
         mocker.patch('server.transform_string_in_datetime', return_value=(datetime.datetime(2022, 5, 22, 10, 0), datetime.datetime.now()))
